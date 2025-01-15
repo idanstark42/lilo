@@ -12,6 +12,10 @@ const mongoClient = new MongoClient(process.env.MONGO_URI, {
   useUnifiedTopology: true,
 })
 
+console.log(process.env.STYTCH_PROJECT_ID)
+console.log(process.env.STYTCH_SECRET)
+console.log(process.env.STYTCH_ENV)
+
 // Stytch client setup
 const stytch = new StytchClient({
   project_id: process.env.STYTCH_PROJECT_ID,
