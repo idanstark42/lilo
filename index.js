@@ -31,8 +31,10 @@ async function handleAuth(authLevel, headerAuth) {
   if (authLevel === 'none') return null
   if (!headerAuth) throw { status: 401, message: 'Missing Authorization header' }
   
-  const [token, state] = headerAuth.split(' ')
-  if (!token || !state) throw { status: 400, message: 'Invalid Authorization format' }
+  console.log('headerAuth')
+  console.log(headerAuth)
+  const [type, token, state] = headerAuth.split(' ')
+  if (!token) throw { status: 400, message: 'Invalid Authorization format' }
 
   try {
     const response = await stytch.oauth.authenticate(token, state)
