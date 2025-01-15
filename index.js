@@ -40,6 +40,8 @@ async function handleAuth(authLevel, headerAuth) {
     console.log('token')
     console.log(session_token)
     const response = await stytch.sessions.authenticate({ session_token })
+    console.log('response')
+    console.log(response)
     const userId = response.user_id
     console.log('userId')
     console.log(userId)
