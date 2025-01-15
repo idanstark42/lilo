@@ -18,7 +18,7 @@ const stytch = new StytchClient({
 
 // Use CORS middleware
 app.use(cors({
-  origin: process.env.ORIGIN,  // Allow only your React app
+  origin: '*',  // Allow only your React app
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow headers
 }))
