@@ -104,12 +104,17 @@ app.post('/database', async (req, res) => {
   try {
     await mongoClient.connect()
     console.log('Connected to MongoDB Atlas')
-
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`)
-    })
   } catch (err) {
     console.error('Error connecting to MongoDB:', err)
     process.exit(1)
   }
+  app.listen(PORT, () => {
+    console.log(`Server is running on ${PORT}`)
+    console.log('---------------------------------')
+    console.log(`Stytch project ID: ${process.env.STYTCH_PROJECT_ID}`)
+    console.log(`CREATE_AUTH_LEVEL: ${process.env.CREATE_AUTH_LEVEL}`)
+    console.log(`READ_AUTH_LEVEL: ${process.env.READ_AUTH_LEVEL}`)
+    console.log(`UPDATE_AUTH_LEVEL: ${process.env.UPDATE_AUTH_LEVEL}`)
+    console.log(`DELETE_AUTH_LEVEL: ${process.env.DELETE_AUTH_LEVEL}`)
+  })
 })()
