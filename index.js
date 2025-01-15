@@ -34,11 +34,11 @@ async function handleAuth(authLevel, headerAuth) {
   console.log('headerAuth')
   console.log(headerAuth)
   const [type, session_token] = headerAuth.split(' ')
-  if (!token) throw { status: 400, message: 'Invalid Authorization format' }
+  if (!session_token) throw { status: 400, message: 'Invalid Authorization format' }
 
   try {
     console.log('token')
-    console.log(token)
+    console.log(session_token)
     const response = await stytch.sessions.authenticate({ session_token })
     const userId = response.user_id
     console.log('userId')
