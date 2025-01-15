@@ -1,0 +1,115 @@
+require('dotenv').config()
+const express = require('express')
+const { MongoClient } = require('mongodb')
+const { Client: StytchClient } = require('stytch')
+
+const app = express()
+const PORT = process.env.PORT || 5000
+
+// MongoDB client setup
+const mongoClient = new MongoClient(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+
+// Stytch client setup
+const stytch = new StytchClient({
+  project_id: process.env.STYTCH_PROJECT_ID,
+  secret: process.env.STYTCH_SECRET,
+  env: process.env.STYTCH_ENV || 'test',
+})
+
+// Middleware to parse JSON
+app.use(express.json())
+
+// Helper to verify authentication
+async function handleAuth(authLevel, headerAuth) {
+  if (authLevel === 'none') return null
+  if (!headerAuth) throw { status: 401, message: 'Missing Authorization header' }
+  
+  const [token, state] = headerAuth.split(' ')
+  if (!token || !state) throw { status: 400, message: 'Invalid Authorization format' }
+
+  try {
+    const response = await stytch.oauth.authenticate(token, state)
+    const userId = response.user_id
+    if (authLevel === 'personal' && !Boolean(userId)) throw { status: 401, message: 'Authentication failed' }
+    return userId
+  } catch {
+    throw { status: 401, message: 'Authentication failed' }
+  }
+}
+
+// Helper to add auth restrictions to database queries
+function filterWithAuth(filter, authLevel, userId) {
+  if (authLevel === 'personal') {
+    if (!filter) throw { status: 400, message: 'Filter is required for personal read' }
+    filter.owner_id = userId
+  }
+  return filter
+}
+
+// action handlers
+const actionHandlers = {
+  create: async function handleCreate(dbCollection, { authLevel, userId, data }) {
+    if (authLevel === 'personal') {
+      data.owner_id = userId
+    }
+    return await dbCollection.insertOne(data)
+  },
+  read: async function handleRead(dbCollection, { authLevel, userId, filter }) {
+    return await dbCollection.find(filterWithAuth(filter, authLevel, userId) || {}).toArray()
+  },
+  update: async function handleUpdate(dbCollection, { authLevel, userId, filter, data }) {
+    const result = await dbCollection.updateOne(filterWithAuth(filter, authLevel, userId), { $set: data })
+    if (result.matchedCount === 0) throw { status: 404, message: 'No matching document found for update' }
+    return result
+  },
+  delete: async function handleDelete(dbCollection, { authLevel, userId, filter }) {
+    const result = await dbCollection.deleteOne(filterWithAuth(filter, authLevel, userId))
+    if (result.deletedCount === 0) throw { status: 404, message: 'No matching document found for deletion' }
+    return result
+  }  
+}
+
+// Unified endpoint for database operations
+app.post('/database', async (req, res) => {
+  const { action, collection, data, filter } = req.body
+  const authLevel = process.env[`${action.toUpperCase()}_AUTH_LEVEL`]
+
+  if (!authLevel || !actionHandlers[action]) {
+    return res.status(400).json({
+      success: false,
+      error: `Invalid action or missing ${action.toUpperCase()}_AUTH_LEVEL environment variable`
+    })
+  }
+
+  try {
+    const userId = await handleAuth(authLevel, req.headers.authorization)
+    const db = mongoClient.db()
+    const dbCollection = db.collection(collection)
+
+    const handler = actionHandlers[action]
+    const result = await handler(dbCollection, { authLevel, userId, data, filter })
+
+    res.status(200).json({ success: true, result })
+  } catch (err) {
+    const status = err.status || 500
+    res.status(status).json({ success: false, error: err.message || 'Internal Server Error' })
+  }
+})
+
+// Connect to MongoDB and start the server
+;(async () => {
+  try {
+    await mongoClient.connect()
+    console.log('Connected to MongoDB Atlas')
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`)
+    })
+  } catch (err) {
+    console.error('Error connecting to MongoDB:', err)
+    process.exit(1)
+  }
+})()
