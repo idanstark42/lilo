@@ -7,10 +7,7 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 // MongoDB client setup
-const mongoClient = new MongoClient(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+const mongoClient = new MongoClient(process.env.MONGO_URI)
 
 // Stytch client setup
 const stytch = new StytchClient({
