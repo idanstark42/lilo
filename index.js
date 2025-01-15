@@ -43,7 +43,8 @@ async function handleAuth(authLevel, headerAuth) {
     console.log(userId)
     if (authLevel === 'personal' && !Boolean(userId)) throw { status: 401, message: 'Authentication failed' }
     return userId
-  } catch {
+  } catch (err) {
+    console.log('Error authenticating with Stytch:', err)
     throw { status: 401, message: 'Authentication failed' }
   }
 }
