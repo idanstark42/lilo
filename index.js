@@ -39,7 +39,7 @@ async function handleAuth(authLevel, headerAuth) {
   try {
     console.log('token')
     console.log(token)
-    const response = await stytch.oauth.authenticate(token)
+    const response = await stytch.oauth.authenticate({ token })
     const userId = response.user_id
     console.log('userId')
     console.log(userId)
