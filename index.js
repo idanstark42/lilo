@@ -42,7 +42,7 @@ async function handleAuth(authLevel, headerAuth) {
     const response = await stytch.sessions.authenticate({ session_token })
     console.log('response')
     console.log(response)
-    const userId = response.user_id
+    const userId = response.session.user_id
     console.log('userId')
     console.log(userId)
     if (authLevel === 'personal' && !Boolean(userId)) throw { status: 401, message: 'Authentication failed' }
