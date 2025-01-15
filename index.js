@@ -15,6 +15,13 @@ const stytch = new StytchClient({
   secret: process.env.STYTCH_SECRET
 })
 
+// Use CORS middleware
+app.use(cors({
+  origin: process.env.ORIGIN,  // Allow only your React app
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow headers
+}))
+
 // Middleware to parse JSON
 app.use(express.json())
 
@@ -69,7 +76,7 @@ const actionHandlers = {
 }
 
 // Unified endpoint for database operations
-app.post('/database', async (req, res) => {
+app.post('/', async (req, res) => {
   const { action, collection, data, filter } = req.body
   const authLevel = process.env[`${action.toUpperCase()}_AUTH_LEVEL`]
 
