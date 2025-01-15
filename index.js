@@ -31,24 +31,15 @@ async function handleAuth(authLevel, headerAuth) {
   if (authLevel === 'none') return null
   if (!headerAuth) throw { status: 401, message: 'Missing Authorization header' }
   
-  console.log('headerAuth')
-  console.log(headerAuth)
   const [type, session_token] = headerAuth.split(' ')
   if (!session_token) throw { status: 400, message: 'Invalid Authorization format' }
 
   try {
-    console.log('token')
-    console.log(session_token)
     const response = await stytch.sessions.authenticate({ session_token })
-    console.log('response')
-    console.log(response)
     const userId = response.session.user_id
-    console.log('userId')
-    console.log(userId)
     if (authLevel === 'personal' && !Boolean(userId)) throw { status: 401, message: 'Authentication failed' }
     return userId
   } catch (err) {
-    console.log('Error authenticating with Stytch:', err)
     throw { status: 401, message: 'Authentication failed' }
   }
 }
