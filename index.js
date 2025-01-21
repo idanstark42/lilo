@@ -7,6 +7,18 @@ const { Client: StytchClient } = require('stytch')
 const app = express()
 const PORT = process.env.PORT || 5000
 
+const LOG_LEVELS = ['debug', 'info', 'warn', 'error']
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
+const log = (logLevel, ...str) => {
+  if (LOG_LEVELS.indexOf(LOG_LEVEL) > LOG_LEVELS.indexOf(logLevel)) {
+    return
+  }
+  console.log(`[${new Date().toISOString()}]`, ...str)
+}
+LOG_LEVELS.forEach(logLevel => {
+  log[logLevel] = (...str) => log(logLevel, ...str)
+})
+
 // MongoDB client setup
 const mongoClient = new MongoClient(process.env.MONGO_URI)
 
@@ -18,9 +30,9 @@ const stytch = new StytchClient({
 
 // Use CORS middleware
 app.use(cors({
-  origin: '*',  // Allow only your React app
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow headers
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 
 // Middleware to parse JSON
@@ -80,6 +92,7 @@ const actionHandlers = {
 app.post('/', async (req, res) => {
   const { action, collection, data, filter } = req.body
   const authLevel = process.env[`${action.toUpperCase()}_AUTH_LEVEL`]
+  log.info(`${action} (authLevel=${authLevel}) from ${collection} ${JSON.stringify(data)} ${JSON.stringify(filter)}`)
 
   if (!authLevel || !actionHandlers[action]) {
     return res.status(400).json({
@@ -94,11 +107,13 @@ app.post('/', async (req, res) => {
     const dbCollection = db.collection(collection)
 
     const handler = actionHandlers[action]
+    log.debug(`userId=${userId}`)
     const result = await handler(dbCollection, { authLevel, userId, data, filter })
 
     res.status(200).json({ success: true, result })
   } catch (err) {
     const status = err.status || 500
+    log.error(err)
     res.status(status).json({ success: false, error: err.message || 'Internal Server Error' })
   }
 })
@@ -107,18 +122,18 @@ app.post('/', async (req, res) => {
 ;(async () => {
   try {
     await mongoClient.connect()
-    console.log('Connected to MongoDB Atlas')
+    log.debug('Connected to MongoDB Atlas')
   } catch (err) {
-    console.error('Error connecting to MongoDB:', err)
+    log.error('Error connecting to MongoDB:', err)
     process.exit(1)
   }
   app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT}`)
-    console.log('---------------------------------')
-    console.log(`Stytch project ID: ${process.env.STYTCH_PROJECT_ID}`)
-    console.log(`CREATE_AUTH_LEVEL: ${process.env.CREATE_AUTH_LEVEL}`)
-    console.log(`READ_AUTH_LEVEL: ${process.env.READ_AUTH_LEVEL}`)
-    console.log(`UPDATE_AUTH_LEVEL: ${process.env.UPDATE_AUTH_LEVEL}`)
-    console.log(`DELETE_AUTH_LEVEL: ${process.env.DELETE_AUTH_LEVEL}`)
+    log.info(`Server is running on ${PORT}`)
+    log.debug('---------------------------------')
+    log.debug(`Stytch project ID: ${process.env.STYTCH_PROJECT_ID}`)
+    log.debug(`CREATE_AUTH_LEVEL: ${process.env.CREATE_AUTH_LEVEL}`)
+    log.debug(`READ_AUTH_LEVEL: ${process.env.READ_AUTH_LEVEL}`)
+    log.debug(`UPDATE_AUTH_LEVEL: ${process.env.UPDATE_AUTH_LEVEL}`)
+    log.debug(`DELETE_AUTH_LEVEL: ${process.env.DELETE_AUTH_LEVEL}`)
   })
 })()
