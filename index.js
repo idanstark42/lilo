@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const { MongoClient } = require('mongodb')
 const { Client: StytchClient } = require('stytch')
+const cloudinary = require('cloudinary').v2
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -91,7 +92,7 @@ const actionHandlers = {
 }
 
 // Unified endpoint for database operations
-app.post('/', async (req, res) => {
+app.post('/database', async (req, res) => {
   const { action, collection, data, filter, options } = req.body
   const authLevel = process.env[`${action.toUpperCase()}_AUTH_LEVEL`]
   log.info(`${action} (authLevel=${authLevel}) from ${collection} ${JSON.stringify(data)} ${JSON.stringify(filter)}`)
@@ -117,6 +118,22 @@ app.post('/', async (req, res) => {
     const status = err.status || 500
     log.error(err)
     res.status(status).json({ success: false, error: err.message || 'Internal Server Error' })
+  }
+})
+
+// Cloudinary endpoint for image uploads
+app.post('/image', async (req, res) => {
+  const { image } = req.body
+  const authLevel = process.env.IMAGE_AUTH_LEVEL
+  log.info(`Upload image (authLevel=${authLevel})`)
+
+  try {
+    await handleAuth(authLevel, req.headers.authorization)
+    const response = await cloudinary.uploader.upload(image)
+    res.status(200).json({ success: true, response })
+  } catch (err) {
+    log.error(err)
+    res.status(500).json({ success: false, error: err.message || 'Internal Server Error' })
   }
 })
 
