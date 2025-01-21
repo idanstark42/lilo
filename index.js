@@ -67,22 +67,24 @@ function filterWithAuth(filter, authLevel, userId) {
 
 // action handlers
 const actionHandlers = {
-  create: async function handleCreate(dbCollection, { authLevel, userId, data }) {
+  create: async function handleCreate(dbCollection, { authLevel, userId, data, options }) {
     if (authLevel === 'personal') {
       data.owner_id = userId
     }
-    return await dbCollection.insertOne(data)
+    return await dbCollection.insertOne(data, options)
   },
-  read: async function handleRead(dbCollection, { authLevel, userId, filter }) {
-    return await dbCollection.find(filterWithAuth(filter, authLevel, userId) || {}).toArray()
+  read: async function handleRead(dbCollection, { authLevel, userId, filter, options }) {
+    const fields = options.fields || {}
+    delete options.fields
+    return await dbCollection.find(filterWithAuth(filter, authLevel, userId) || {}, fields, options).toArray()
   },
-  update: async function handleUpdate(dbCollection, { authLevel, userId, filter, data }) {
-    const result = await dbCollection.updateOne(filterWithAuth(filter, authLevel, userId), { $set: data })
+  update: async function handleUpdate(dbCollection, { authLevel, userId, filter, data, options }) {
+    const result = await dbCollection.updateOne(filterWithAuth(filter, authLevel, userId), { $set: data }, options)
     if (result.matchedCount === 0) throw { status: 404, message: 'No matching document found for update' }
     return result
   },
-  delete: async function handleDelete(dbCollection, { authLevel, userId, filter }) {
-    const result = await dbCollection.deleteOne(filterWithAuth(filter, authLevel, userId))
+  delete: async function handleDelete(dbCollection, { authLevel, userId, filter, options }) {
+    const result = await dbCollection.deleteOne(filterWithAuth(filter, authLevel, userId), options)
     if (result.deletedCount === 0) throw { status: 404, message: 'No matching document found for deletion' }
     return result
   }  
@@ -90,7 +92,7 @@ const actionHandlers = {
 
 // Unified endpoint for database operations
 app.post('/', async (req, res) => {
-  const { action, collection, data, filter } = req.body
+  const { action, collection, data, filter, options } = req.body
   const authLevel = process.env[`${action.toUpperCase()}_AUTH_LEVEL`]
   log.info(`${action} (authLevel=${authLevel}) from ${collection} ${JSON.stringify(data)} ${JSON.stringify(filter)}`)
 
@@ -108,7 +110,7 @@ app.post('/', async (req, res) => {
 
     const handler = actionHandlers[action]
     log.debug(`userId=${userId}`)
-    const result = await handler(dbCollection, { authLevel, userId, data, filter })
+    const result = await handler(dbCollection, { authLevel, userId, data, filter, options })
 
     res.status(200).json({ success: true, result })
   } catch (err) {
