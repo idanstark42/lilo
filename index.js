@@ -128,19 +128,17 @@ app.post('/database', async (req, res) => {
 // Cloudinary endpoint for image uploads
 app.post('/image', async (req, res) => {
   const image = req.files?.image?.tempFilePath
-  log.debug(`req.files=${JSON.stringify(req.files)}`)
-  log.debug(`image=${image}`)
   const authLevel = process.env.IMAGE_AUTH_LEVEL
   log.info(`Upload image (authLevel=${authLevel})`)
 
   try {
     await handleAuth(authLevel, req.headers.authorization)
-    const response = await cloudinary.uploader.upload(image, {
+    const result = await cloudinary.uploader.upload(image, {
       folder: 'lilo',
       public_id: `${new Date().toISOString().replace(/[^0-9]/g, '')}`,
       resource_type: 'auto'
     })
-    res.status(200).json({ success: true, response })
+    res.status(200).json({ success: true, result })
   } catch (err) {
     log.error(err)
     res.status(500).json({ success: false, error: err.message || 'Internal Server Error' })
