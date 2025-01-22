@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const { MongoClient } = require('mongodb')
 const { Client: StytchClient } = require('stytch')
+const fileupload = require('express-fileupload')
 const cloudinary = require('cloudinary').v2
 
 const app = express()
@@ -38,6 +39,9 @@ app.use(cors({
 
 // Middleware to parse JSON
 app.use(express.json())
+
+// Middleware to parse file uploads
+app.use(fileupload({ useTempFiles: true }))
 
 // Helper to verify authentication
 async function handleAuth(authLevel, headerAuth) {
@@ -123,14 +127,18 @@ app.post('/database', async (req, res) => {
 
 // Cloudinary endpoint for image uploads
 app.post('/image', async (req, res) => {
-  const { image } = req.body
+  const image = req.files?.image?.tempFilePath
   log.debug(`image=${image}`)
   const authLevel = process.env.IMAGE_AUTH_LEVEL
   log.info(`Upload image (authLevel=${authLevel})`)
 
   try {
     await handleAuth(authLevel, req.headers.authorization)
-    const response = await cloudinary.uploader.upload(image)
+    const response = await cloudinary.uploader.upload(image, {
+      folder: 'lilo',
+      public_id: `${new Date().toISOString().replace(/[^0-9]/g, '')}`,
+      resource_type: 'auto'
+    })
     res.status(200).json({ success: true, response })
   } catch (err) {
     log.error(err)
