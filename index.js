@@ -124,6 +124,7 @@ app.post('/database', async (req, res) => {
 // Cloudinary endpoint for image uploads
 app.post('/image', async (req, res) => {
   const { image } = req.body
+  log.debug(`image=${image}`)
   const authLevel = process.env.IMAGE_AUTH_LEVEL
   log.info(`Upload image (authLevel=${authLevel})`)
 
