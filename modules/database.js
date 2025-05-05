@@ -35,13 +35,13 @@ exports.router = () => {
   const router = express.Router()
   router.post('/', async (req, res) => {
     const { action, collection, data, filter, options } = req.body
-    const authLevel = process.env[`${action.toUpperCase()}_AUTH_LEVEL`]
+    const authLevel = process.env[`${collection.toUpperCase()}_${action.toUpperCase()}_AUTH_LEVEL`]
     log.info(`${action} (authLevel=${authLevel}) from ${collection} ${JSON.stringify(data)} ${JSON.stringify(filter)}`)
 
     if (!authLevel || !actionHandlers[action]) {
       return res.status(400).json({
         success: false,
-        error: `Invalid action or missing ${action.toUpperCase()}_AUTH_LEVEL environment variable`
+        error: `Invalid action or missing ${collection.toUpperCase()}_${action.toUpperCase()}_AUTH_LEVEL environment variable`
       })
     }
 

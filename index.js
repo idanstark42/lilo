@@ -6,8 +6,6 @@ const fileupload = require('express-fileupload')
 const { log } = require('./modules/log')
 const { router: dBRouter, connectDatabase } = require('./modules/database')
 const { router: cloudinaryRouter } = require('./modules/cloudinary')
-const { router: paypalRouter } = require('./modules/paypal')
-const { router: authRouter } = require('./modules/auth')
 
 dotenv.config()
 
@@ -24,8 +22,6 @@ app.use(express.json())
 app.use(fileupload({ useTempFiles: true }))
 app.use('/database', dBRouter())
 app.use('/image', cloudinaryRouter())
-app.use('/paypal', paypalRouter())
-app.use('/auth', authRouter())
 
 ;(async () => {
   await connectDatabase()
