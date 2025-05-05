@@ -2,7 +2,7 @@ const express = require('express')
 const { MongoClient } = require('mongodb')
 
 const { handleAuth, filterWithAuth } = require('./auth')
-const { log } = require('./logger')
+const { log } = require('./log')
 
 const mongoClient = new MongoClient(process.env.MONGO_URI)
 
