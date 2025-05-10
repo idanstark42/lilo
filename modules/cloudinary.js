@@ -1,18 +1,19 @@
 const cloudinary = require('cloudinary').v2
 const express = require('express')
 const { log } = require('./log')
-const { handleAuth } = require('./auth')
+const { getAuth } = require('./auth')
 
 exports.router = () => {
   const router = express.Router()
 
   router.post('/', async (req, res) => {
     const image = req.files?.image?.tempFilePath
-    const authLevel = process.env.IMAGE_AUTH_LEVEL
-    log.info(`Upload image (authLevel=${authLevel})`)
+    const authType = process.env.IMAGE_AUTH_TYPE
+    const auth = getAuth(authType)
+    log.info(`Upload image (authType=${authType})`)
 
     try {
-      await handleAuth(authLevel, req.headers.authorization)
+      await auth.authenticate(req.headers.authorization)
       const result = await cloudinary.uploader.upload(image, {
         folder: 'lilo',
         public_id: `${new Date().toISOString().replace(/[^0-9]/g, '')}`,
