@@ -64,7 +64,9 @@ const actionHandlers = {
     const newFilter = auth.filter(filter) || {}
     console.log('newFilter', {newFilter})
     console.log('options', options)
-    return await dbCollection.find({}, options).toArray()
+    const result = await dbCollection.find({}, options).toArray()
+    console.log('result', result)
+    return result
   },
   update: async function handleUpdate(dbCollection, { auth, filter, data, options }) {
     auth.enrich(data)
