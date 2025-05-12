@@ -31,8 +31,6 @@ exports.router = () => {
     try {
       await auth.authenticate(req.headers.authorization)
       const db = mongoClient.db(process.env.DATABASE_NAME)
-      console.log('stats', await db.stats())
-      console.log('collections', await db.listCollections().toArray())
       const dbCollection = db.collection(collection)
       const result = await handler(dbCollection, { auth, data, filter, options })
 
@@ -63,12 +61,7 @@ const actionHandlers = {
     return await dbCollection.insertOne(data, options)
   },
   read: async function handleRead(dbCollection, { auth, filter, options }) {
-    // const newFilter = auth.filter(filter) || {}
-    console.log('newFilter', {})
-    console.log('options', options)
-    const result = await dbCollection.find({}, options).toArray()
-    console.log('result', result)
-    return result
+    return await dbCollection.find(auth.filter(filter) || {}, options).toArray()
   },
   update: async function handleUpdate(dbCollection, { auth, filter, data, options }) {
     auth.enrich(data)
