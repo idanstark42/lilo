@@ -1,6 +1,7 @@
 class AuthType {
-  constructor (stytch) {
+  constructor (stytch, flags) {
     this.stytch = stytch
+    this.flags = flags
   }
 
   // Throw an error if authentication fails
@@ -10,7 +11,7 @@ class AuthType {
   }
 
   // Add filters to the query
-  filter (filter) {
+  filter (filter, _options) {
     // Do nothing in abstract class
     return filter
   }

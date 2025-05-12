@@ -1,7 +1,11 @@
 const AuthType = require('./auth-type')
 
 class HeaderAuth extends AuthType {
-  async authenticate (authHeader) {
+  async authenticate (authHeader, options) {
+    if (this.allowWithoutAuth(options)) {
+      return
+    }
+
     if (!authHeader) this.raise('Missing auth header')
     const [_type, session_token] = authHeader.split(' ')
     if (!session_token) this.raise('Missing session token')
@@ -12,6 +16,15 @@ class HeaderAuth extends AuthType {
     } catch (err) {
       this.raise(`Error occurred ${err.message}`)
     }
+  }
+
+  allowWithoutAuth (options) {
+    // Check fields that allow access without auth
+    const protectedFields = auth.flags.some(flag => flag.includes('protected-field:')).map(flag => flag.split(':')[1])
+    return protectedFields.length > 0 &&
+      options &&
+      options.projection &&
+      protectedFields.every(field => !options.projection.includes(field))
   }
 }
 

@@ -2,6 +2,10 @@ const HeaderAuth = require('./header-auth')
 
 class PermissionsAuth extends HeaderAuth {
   async authenticate (authHeader) {
+    if (this.allowWithoutAuth(options)) {
+      return
+    }
+
     await super.authenticate(authHeader)
     const user = await this.stytch.users.get({ user_id: this.userId })
     if (!user) this.raise('User not found')
@@ -10,6 +14,10 @@ class PermissionsAuth extends HeaderAuth {
   }
 
   filter (filter) {
+    if (this.allowWithoutAuth(options)) {
+      return filter
+    }
+
     const $or = [
       { _id: { $in: [...this.permissions] } },
       { public: true }

@@ -2,6 +2,10 @@ const HeaderAuth = require('./header-auth')
 
 class AdminAuth extends HeaderAuth {
   async authenticate (authHeader) {
+    if (this.allowWithoutAuth(options)) {
+      return
+    }
+
     await super.authenticate(authHeader)
     const user = await this.stytch.users.get({ user_id: this.userId })
     if (!user) this.raise('User not found')

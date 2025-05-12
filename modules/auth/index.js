@@ -20,7 +20,10 @@ const AUTH_TYPES = {
 }
 
 function getAuth (authType) {
-  return (AUTH_TYPES[authType] || AUTH_TYPES.none) (stytch)
+  const authTypeParts = authType.split(':')
+  const authTypeName = authTypeParts[0]
+  const authTypeFlags = authTypeParts[1].split('|')
+  return (AUTH_TYPES[authTypeName] || AUTH_TYPES.none) (stytch, authTypeFlags)
 }
 
 exports.getAuth = getAuth
