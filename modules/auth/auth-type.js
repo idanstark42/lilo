@@ -21,8 +21,8 @@ class AuthType {
     return data
   }
 
-  raise () {
-    throw { status: 401, message: 'Authentication failed' }
+  raise (reason) {
+    throw { status: 401, message: `Authentication failed: ${reason}` }
   }
 }
 
