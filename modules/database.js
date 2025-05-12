@@ -61,11 +61,9 @@ const actionHandlers = {
     return await dbCollection.insertOne(data, options)
   },
   read: async function handleRead(dbCollection, { auth, filter, options }) {
-    const fields = options.fields || {}
-    delete options.fields
     const newFilter = auth.filter(filter) || {}
     console.log('newFilter', newFilter)
-    return await dbCollection.find(newFilter, fields, options).toArray()
+    return await dbCollection.find(newFilter, options).toArray()
   },
   update: async function handleUpdate(dbCollection, { auth, filter, data, options }) {
     auth.enrich(data)
