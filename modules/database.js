@@ -62,9 +62,9 @@ const actionHandlers = {
   },
   read: async function handleRead(dbCollection, { auth, filter, options }) {
     const newFilter = auth.filter(filter) || {}
-    console.log('newFilter', newFilter)
+    console.log('newFilter', {newFilter})
     console.log('options', options)
-    return await dbCollection.find(newFilter, options).toArray()
+    return await dbCollection.find({}, options).toArray()
   },
   update: async function handleUpdate(dbCollection, { auth, filter, data, options }) {
     auth.enrich(data)
