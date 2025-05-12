@@ -6,11 +6,11 @@ class PermissionsAuth extends HeaderAuth {
     const user = await this.stytch.users.get({ user_id: this.userId })
     if (!user) this.raise('User not found')
     this.permissions = user.trusted_metadata.permissions
-    console.log(this.permissions)
     if (!this.permissions) { this.permissions = [] }
   }
 
   filter (filter) {
+    console.log(this.permissions)
     const $or = [
       { _id: { $in: this.permissions } },
       { public: true }
