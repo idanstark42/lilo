@@ -15,7 +15,7 @@ const stytch = new StytchClient({
 const AUTH_TYPES = {
   none: (...args) => new NoAuth(...args),
   personal: (...args) => new PersonalAuth(...args),
-  permissions: (...args) => PermissionsAuth(...args),
+  permissions: (...args) => new PermissionsAuth(...args),
   admin: (...args) => new AdminAuth(...args)
 }
 
