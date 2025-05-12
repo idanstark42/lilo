@@ -20,7 +20,7 @@ class HeaderAuth extends AuthType {
 
   allowWithoutAuth (options) {
     // Check fields that allow access without auth
-    const protectedFields = auth.flags.some(flag => flag.includes('protected-field:')).map(flag => flag.split(':')[1])
+    const protectedFields = auth.flags.some(flag => flag.includes('protected-field ')).map(flag => flag.split(':')[1])
     return protectedFields.length > 0 &&
       options &&
       options.projection &&
