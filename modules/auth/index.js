@@ -3,6 +3,8 @@ const { Client: StytchClient } = require('stytch')
 
 const NoAuth = require('./no-auth')
 const PersonalAuth = require('./personal-auth')
+const PermissionsAuth = require('./permissions-auth')
+const AdminAuth = require('./admin-auth')
 
 // Stytch client setup
 const stytch = new StytchClient({
@@ -12,7 +14,9 @@ const stytch = new StytchClient({
 
 const AUTH_TYPES = {
   none: () => new NoAuth(),
-  personal: () => new PersonalAuth()
+  personal: () => new PersonalAuth(),
+  permissions: () => PermissionsAuth(),
+  admin: () => new AdminAuth()
 }
 
 function getAuth (authType) {

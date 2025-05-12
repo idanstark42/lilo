@@ -5,7 +5,13 @@ class PersonalAuth extends HeaderAuth {
     await super.authenticate(authHeader)
     const user = await this.stytch.users.get({ user_id: this.userId })
     if (!user) this.raise()
-    if (!user.admin) this.raise()
+    this.permissions = user.trusted_metadata.permissions
+    if (!this.permissions) { this.permissions = [] }
+  }
+
+  filter (filter) {
+    filter._id = { $in: this.permissions }
+    return filter
   }
 }
 
