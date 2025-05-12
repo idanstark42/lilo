@@ -24,7 +24,7 @@ class HeaderAuth extends AuthType {
     return protectedFields.length > 0 &&
       options &&
       options.projection &&
-      protectedFields.every(field => !options.projection.includes(field))
+      protectedFields.every(field => !options.projection.includes(field) || options.projection[field] === 0)
   }
 }
 
