@@ -11,7 +11,7 @@ class PermissionsAuth extends HeaderAuth {
 
   filter (filter) {
     const $or = [
-      { _id: { $in: user.permissions } },
+      { _id: { $in: this.permissions } },
       { public: true }
     ]
 
