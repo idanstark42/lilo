@@ -5,7 +5,7 @@ class AuthType {
   }
 
   // Throw an error if authentication fails
-  async authenticate (_authHeader) {
+  async authenticate (_authHeader, _options) {
     // Do nothing in abstract class
     return null
   }

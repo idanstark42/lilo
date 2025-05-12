@@ -1,7 +1,7 @@
 const HeaderAuth = require('./header-auth')
 
 class PersonalAuth extends HeaderAuth {
-  filter (filter) {
+  filter (filter, options) {
     if (this.allowWithoutAuth(options)) {
       return filter
     }
