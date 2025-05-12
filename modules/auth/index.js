@@ -13,10 +13,10 @@ const stytch = new StytchClient({
 })
 
 const AUTH_TYPES = {
-  none: () => new NoAuth(),
-  personal: () => new PersonalAuth(),
-  permissions: () => PermissionsAuth(),
-  admin: () => new AdminAuth()
+  none: (...args) => new NoAuth(...args),
+  personal: (...args) => new PersonalAuth(...args),
+  permissions: (...args) => PermissionsAuth(...args),
+  admin: (...args) => new AdminAuth(...args)
 }
 
 function getAuth (authType) {

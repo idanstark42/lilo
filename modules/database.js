@@ -16,10 +16,15 @@ exports.router = () => {
     
     log.info(`${action} (authType=${authType}) from ${collection} ${JSON.stringify(data)} ${JSON.stringify(filter)}`)
 
-    if (!authType || !handler) {
+    if (!authType) {
       return res.status(400).json({
         success: false,
-        error: `Invalid action or missing ${collection.toUpperCase()}_${action.toUpperCase()}_AUTH_TYPE environment variable`
+        error: `Missing ${collection.toUpperCase()}_${action.toUpperCase()}_AUTH_TYPE (set to ${authType})`
+      })
+    } else if (!handler) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid action ${action} for collection ${collection}`
       })
     }
 
