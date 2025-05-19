@@ -1,4 +1,4 @@
-import Mux from '@mux/mux-node'
+const Mux = require('@mux/mux-node')
 const express = require('express')
 const { log } = require('./log')
 const { getAuth } = require('./auth')
