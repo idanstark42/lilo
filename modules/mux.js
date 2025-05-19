@@ -25,6 +25,7 @@ exports.router = () => {
           video_quality: 'basic'
         }
       })
+      console.log(upload)
       res.status(200).json({ success: true, url: upload.url })
     } catch (err) {
       log.error(err)
