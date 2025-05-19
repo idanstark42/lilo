@@ -22,7 +22,7 @@ exports.router = () => {
       res.status(200).json({ success: true, result })
     } catch (err) {
       log.error(err)
-      res.status(500).json({ success: false, error: err.message || 'Internal Server Error' })
+      res.status(err.status || 500).json({ success: false, error: err.message || 'Internal Server Error' })
     }
 })
 

@@ -28,7 +28,7 @@ exports.router = () => {
       res.status(200).json({ success: true, url: upload.url })
     } catch (err) {
       log.error(err)
-      res.status(500).json({ success: false, error: err.message || 'Internal Server Error' })
+      res.status(err.status || 500).json({ success: false, error: err.message || 'Internal Server Error' })
     }
 })
 
