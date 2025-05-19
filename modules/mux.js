@@ -18,8 +18,8 @@ exports.router = () => {
 
     try {
       await auth.authenticate(req.headers.authorization)
-      upload = mux.video.uploads.create({
-        cors_origin: 'https://your-browser-app.com', 
+      const upload = mux.video.uploads.create({
+        cors_origin: 'https://localhost:5173', 
         new_asset_settings: {
           playback_policy: ['private'],
           video_quality: 'basic'
