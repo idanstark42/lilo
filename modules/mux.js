@@ -18,14 +18,13 @@ exports.router = () => {
 
     try {
       await auth.authenticate(req.headers.authorization)
-      const upload = mux.video.uploads.create({
+      const upload = await mux.video.uploads.create({
         cors_origin: 'https://localhost:5173', 
         new_asset_settings: {
           playback_policy: ['signed'],
           video_quality: 'basic'
         }
       })
-      console.log(upload)
       res.status(200).json({ success: true, url: upload.url })
     } catch (err) {
       log.error(err)
