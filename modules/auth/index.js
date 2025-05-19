@@ -22,7 +22,7 @@ const AUTH_TYPES = {
 function getAuth (authType) {
   const authTypeParts = authType.split(':')
   const authTypeName = authTypeParts[0]
-  const authTypeFlags = authTypeParts[1].split('|')
+  const authTypeFlags = authTypeParts.length > 1 ? authTypeParts[1].split('|') : []
   return (AUTH_TYPES[authTypeName] || AUTH_TYPES.none) (stytch, authTypeFlags)
 }
 
