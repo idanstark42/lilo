@@ -6,6 +6,7 @@ const fileupload = require('express-fileupload')
 const { log } = require('./modules/log')
 const { router: dBRouter, connectDatabase } = require('./modules/database')
 const { router: cloudinaryRouter } = require('./modules/cloudinary')
+const { router: muxRouter } = require('./modules/mux')
 
 dotenv.config()
 
@@ -22,6 +23,7 @@ app.use(express.json())
 app.use(fileupload({ useTempFiles: true }))
 app.use('/database', dBRouter())
 app.use('/image', cloudinaryRouter())
+app.use('/video', muxRouter())
 
 ;(async () => {
   await connectDatabase()
