@@ -10,9 +10,9 @@ class AdminAuth extends HeaderAuth {
 
     await super.authenticate(authHeader, options)
     const user = await this.stytch.users.get({ user_id: this.userId })
+    console.log(ADMINS)
     if (!user) this.raise('User not found')
     if (!ADMINS.includes(this.userId)) this.raise('This action is only available to admins, not for user ' + this.userId)
-    console.log(ADMINS)
   }
 }
 
