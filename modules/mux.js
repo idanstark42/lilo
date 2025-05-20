@@ -43,7 +43,10 @@ exports.router = () => {
       mux.webhooks.verifySignature(req.body, req.headers, MUX_WEBHOOK_SECRET)
       // convert the raw req.body to JSON, which is originally Buffer (raw)
       const event = JSON.parse(req.body)
-      EVENT_HANDLERS[event.type](event)
+      const handler = EVENT_HANDLERS[event.type]
+      if (handler) {
+        handler(event)
+      }
       res.json({ received: true })
     } catch (err) {
       return res.status(400).send(`Webhook Error: ${err.message}`)
