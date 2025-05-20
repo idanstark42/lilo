@@ -6,6 +6,8 @@ const { log } = require('./log')
 
 const mongoClient = new MongoClient(process.env.MONGO_URI)
 
+exports.mongoClient = mongoClient
+
 exports.router = () => {
   const router = express.Router()
   router.post('/', async (req, res) => {

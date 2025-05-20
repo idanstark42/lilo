@@ -1,8 +1,10 @@
 const Mux = require('@mux/mux-node')
 const express = require('express')
 const bodyParser = require('body-parser')
+
 const { log } = require('./log')
 const { getAuth } = require('./auth')
+const { mongoClient } = require('./database')
 
 const mux = new Mux({
   tokenId: process.env.MUX_TOKEN_ID,
@@ -41,8 +43,7 @@ exports.router = () => {
       mux.webhooks.verifySignature(req.body, req.headers, MUX_WEBHOOK_SECRET)
       // convert the raw req.body to JSON, which is originally Buffer (raw)
       const event = JSON.parse(req.body)
-      log.info(event)
-      
+      EVENT_HANDLERS[event.type](event)
       res.json({ received: true })
     } catch (err) {
       return res.status(400).send(`Webhook Error: ${err.message}`)
@@ -50,4 +51,19 @@ exports.router = () => {
   })
 
   return router
+}
+
+const EVENT_HANDLERS = {
+  'video.asset.ready': async event => {
+    const db = mongoClient.db(process.env.DATABASE_NAME)
+    const dbCollection = db.collection(process.env.VIDEOS_COLLECTION)
+    return await dbCollection.insertOne({
+      assetId: event.object.id,
+      playbackId: event.data.playback_ids[0],
+      metadata: {
+        duration: event.data.duration,
+        createdAt: event.created_at
+      }
+    })
+  }
 }
