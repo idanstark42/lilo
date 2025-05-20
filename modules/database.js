@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 
 const { getAuth } = require('./auth')
 const { log } = require('./log')
@@ -63,17 +63,24 @@ const actionHandlers = {
     return await dbCollection.insertOne(data, options)
   },
   read: async function handleRead(dbCollection, { auth, filter, options }) {
-    return await dbCollection.find(auth.filter(filter, options), options).toArray()
+    return await dbCollection.find(prepareFilter(auth.filter(filter, options)), options).toArray()
   },
   update: async function handleUpdate(dbCollection, { auth, filter, data, options }) {
     auth.enrich(data)
-    const result = await dbCollection.updateOne(auth.filter(filter), { $set: data }, options)
+    const result = await dbCollection.updateOne(prepareFilter(auth.filter(filter, options)), { $set: data }, options)
     if (result.matchedCount === 0) throw { status: 404, message: 'No matching document found for update' }
     return result
   },
   delete: async function handleDelete(dbCollection, { auth, filter, options }) {
-    const result = await dbCollection.deleteOne(auth.filter(filter), options)
+    const result = await dbCollection.deleteOne(prepareFilter(auth.filter(filter, options)), options)
     if (result.deletedCount === 0) throw { status: 404, message: 'No matching document found for deletion' }
     return result
   }
+}
+
+const prepareFilter = filter => {
+  if (filter._id) {
+    filter._id = ObjectId(filter._id)
+  }
+  return filter
 }
