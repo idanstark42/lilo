@@ -38,12 +38,13 @@ exports.router = () => {
   router.post('/webhooks', bodyParser.text({ type: 'application/json' }), async (req, res) => {
     try {
       // will raise an exception if the signature is invalid
-      console.log(typeof req.body)
       console.log(req.body)
+      console.log(req.headers)
+      console.log(MUX_WEBHOOK_SECRET)
       const isValidSignature = mux.webhooks.verifySignature(req.body, req.headers, MUX_WEBHOOK_SECRET)
       if (!isValidSignature) {
         log.warn('Invalid webhook request')
-        throw 'Invalid webhook request'
+        throw { message: 'Invalid webhook request' }
       }
       // convert the raw req.body to JSON, which is originally Buffer (raw)
       const event = JSON.parse(req.body)
