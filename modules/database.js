@@ -80,7 +80,7 @@ const actionHandlers = {
 
 const prepareFilter = filter => {
   if (filter._id) {
-    filter._id = ObjectId(filter._id)
+    filter._id = new ObjectId(filter._id)
   }
   return filter
 }
