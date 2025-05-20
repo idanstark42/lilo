@@ -1,5 +1,6 @@
 const Mux = require('@mux/mux-node')
 const express = require('express')
+const bodyParser = require('body-parser')
 const { log } = require('./log')
 const { getAuth } = require('./auth')
 
@@ -34,7 +35,7 @@ exports.router = () => {
     }
   })
 
-  router.post('/webhooks', express.raw({ type: 'application/json' }), async (req, res) => {
+  router.post('/webhooks', bodyParser.text({ type: 'application/json' }), async (req, res) => {
     try {
       // will raise an exception if the signature is invalid
       mux.webhooks.verifySignature(req.body, req.headers, MUX_WEBHOOK_SECRET)
