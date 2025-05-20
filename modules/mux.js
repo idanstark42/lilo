@@ -60,6 +60,7 @@ const EVENT_HANDLERS = {
     return await dbCollection.insertOne({
       assetId: event.object.id,
       playbackId: event.data.playback_ids[0],
+      public: true,
       metadata: {
         duration: event.data.duration,
         createdAt: event.created_at
