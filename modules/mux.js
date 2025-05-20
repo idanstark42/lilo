@@ -35,7 +35,7 @@ exports.router = () => {
     }
   })
 
-  routerpost('/webhooks', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+  router.post('/webhooks', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
     try {
       // will raise an exception if the signature is invalid
       const isValidSignature = mux.webhooks.verifySignature(req.body, req.headers, MUX_WEBHOOK_SECRET)
