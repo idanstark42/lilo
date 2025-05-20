@@ -35,7 +35,7 @@ exports.router = () => {
     }
   })
 
-  router.post('/webhooks', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+  router.post('/webhooks', bodyParser.text({ type: 'application/json' }), async (req, res) => {
     try {
       // will raise an exception if the signature is invalid
       console.log(typeof req.body)
