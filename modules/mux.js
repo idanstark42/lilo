@@ -14,7 +14,7 @@ const MUX_WEBHOOK_SECRET = process.env.MUX_WEBHOOK_SECRET
 exports.router = () => {
   const router = express.Router()
 
-  router.get('/upload-url', async (req, res) => {
+  router.get('/upload-url', express.json(), async (req, res) => {
     const authType = process.env.VIDEO_UPLOAD_AUTH_TYPE
     const auth = getAuth(authType)
     log.info(`Get upload URL (authType=${authType})`)

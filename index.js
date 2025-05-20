@@ -19,10 +19,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 
-app.use(express.json())
 app.use(fileupload({ useTempFiles: true }))
-app.use('/database', dBRouter())
-app.use('/image', cloudinaryRouter())
+app.use('/database', express.json(), dBRouter())
+app.use('/image', express.json(), cloudinaryRouter())
 app.use('/video', muxRouter())
 
 ;(async () => {
