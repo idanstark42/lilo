@@ -38,6 +38,7 @@ exports.router = () => {
   router.post('/webhooks', async (req, res) => {
     try {
       // will raise an exception if the signature is invalid
+      console.log(typeof req.body)
       const isValidSignature = mux.webhooks.verifySignature(req.body, req.headers, MUX_WEBHOOK_SECRET)
       if (!isValidSignature) {
         log.warn('Invalid webhook request')
