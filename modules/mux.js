@@ -58,6 +58,7 @@ exports.router = () => {
 
 const EVENT_HANDLERS = {
   'video.asset.ready': async event => {
+    console.log(event)
     const db = mongoClient.db(process.env.DATABASE_NAME)
     const dbCollection = db.collection(process.env.VIDEOS_COLLECTION)
     return await dbCollection.insertOne({
