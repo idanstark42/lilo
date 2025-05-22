@@ -9,8 +9,8 @@ class PermissionsAuth extends HeaderAuth {
     await super.authenticate(authHeader, options)
     const user = await this.stytch.users.get({ user_id: this.userId })
     if (!user) this.raise('User not found')
-    this.permissions = user.trusted_metadata.permissions
-    if (!this.permissions) { this.permissions = [] }
+    this.permissions = user.trusted_metadata.permissions || []
+    if (!this.permissions || typeof this.permissions[Symbol.iterator] === 'function') { this.permissions = [] }
   }
 
   filter (filter, options) {
