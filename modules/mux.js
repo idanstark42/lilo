@@ -12,6 +12,7 @@ const mux = new Mux({
 })
 
 const MUX_WEBHOOK_SECRET = process.env.MUX_WEBHOOK_SECRET
+const MUX_SIGNING_KEY = process.env.MUX_SIGNING_KEY
 
 exports.router = () => {
   const router = express.Router()
@@ -51,6 +52,11 @@ exports.router = () => {
     } catch (err) {
       return res.status(400).send(`Webhook Error: ${err.message}`)
     }
+  })
+
+  router.get('/signingkey/:playbackId', async (req, res) => {
+    const key = mux.jwt.signPlaybackId(req.params.playbackId)
+    res.status(200).json({ key })
   })
 
   return router
