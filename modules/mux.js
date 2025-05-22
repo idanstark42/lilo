@@ -55,8 +55,11 @@ exports.router = () => {
   })
 
   router.get('/signingkey/:playbackId', async (req, res) => {
-    const key = mux.jwt.signPlaybackId(req.params.playbackId)
-    res.status(200).json({ key })
+    const tokens = await mux.jwt.signPlaybackId(req.params.playbackId, {
+      expiration: '1d',
+      type: ['playback', 'thumbnail', 'storyboard', 'drm_license']
+    })
+    res.status(200).json({ tokens })
   })
 
   return router
