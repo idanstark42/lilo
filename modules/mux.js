@@ -12,7 +12,6 @@ const mux = new Mux({
 })
 
 const MUX_WEBHOOK_SECRET = process.env.MUX_WEBHOOK_SECRET
-const MUX_SIGNING_KEY = process.env.MUX_SIGNING_KEY
 
 exports.router = () => {
   const router = express.Router()

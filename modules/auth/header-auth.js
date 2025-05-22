@@ -19,6 +19,9 @@ class HeaderAuth extends AuthType {
   }
 
   allowWithoutAuth (options) {
+    if (options.filter && options.filter.public === true) {
+      return true
+    }
     // Check fields that allow access without auth
     const protectedFields = this.flags.filter(flag => flag.includes('protected-field ')).map(flag => flag.split(':')[1])
     return protectedFields.length > 0 &&
