@@ -58,7 +58,7 @@ exports.router = () => {
     console.log(req.params.playbackId)
     const tokens = await mux.jwt.signPlaybackId(req.params.playbackId, {
       expiration: '1d',
-      type: ['playback', 'thumbnail', 'storyboard', 'drm_license']
+      type: ['video', 'thumbnail', 'storyboard', 'drm_license']
     })
     res.status(200).json({ tokens })
   })
