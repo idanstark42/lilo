@@ -3,6 +3,7 @@ const HeaderAuth = require('./header-auth')
 class PermissionsAuth extends HeaderAuth {
   async authenticate (authHeader, options) {
     if (this.allowWithoutAuth(options)) {
+      this.permissions = []
       return
     }
 
@@ -10,8 +11,7 @@ class PermissionsAuth extends HeaderAuth {
     const user = await this.stytch.users.get({ user_id: this.userId })
     if (!user) this.raise('User not found')
     this.permissions = user.trusted_metadata.permissions || []
-    console.log(this.permissions)
-    if (!this.permissions || typeof this.permissions[Symbol.iterator] === 'function') { this.permissions = [] }
+    if (!this.permissions) { this.permissions = [] }
   }
 
   filter (filter, options) {
