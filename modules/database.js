@@ -31,7 +31,7 @@ exports.router = () => {
     }
 
     try {
-      await auth.authenticate(req.headers.authorization, options)
+      await auth.authenticate(req.headers.authorization, { filter, options })
       const db = mongoClient.db(process.env.DATABASE_NAME)
       const dbCollection = db.collection(collection)
       const result = await handler(dbCollection, { auth, data, filter, options })

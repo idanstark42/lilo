@@ -18,8 +18,8 @@ class HeaderAuth extends AuthType {
     }
   }
 
-  allowWithoutAuth (options) {
-    if (options.filter && options.filter.public === true) {
+  allowWithoutAuth ({ filter, options }) {
+    if (filter && filter.public === true) {
       return true
     }
     // Check fields that allow access without auth
