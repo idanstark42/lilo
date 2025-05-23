@@ -1,7 +1,7 @@
 const HeaderAuth = require('./header-auth')
 
 class PermissionsAuth extends HeaderAuth {
-  async authenticate (authHeader, options) {
+  async authenticate (authHeader, options={}) {
     if (this.allowWithoutAuth(options)) {
       this.permissions = []
       return

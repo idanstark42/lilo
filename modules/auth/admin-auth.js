@@ -3,7 +3,7 @@ const HeaderAuth = require('./header-auth')
 const ADMINS = process.env.ADMINS.split(',')
 
 class AdminAuth extends HeaderAuth {
-  async authenticate (authHeader, options) {
+  async authenticate (authHeader, options={}) {
     if (this.allowWithoutAuth(options)) {
       return
     }

@@ -1,7 +1,7 @@
 const AuthType = require('./auth-type')
 
 class HeaderAuth extends AuthType {
-  async authenticate (authHeader, options) {
+  async authenticate (authHeader, options={}) {
     if (this.allowWithoutAuth(options)) {
       return
     }
