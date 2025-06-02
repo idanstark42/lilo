@@ -1,6 +1,5 @@
 const express = require('express')
 const { Client: StytchClient } = require('stytch')
-const express = require('express')
 
 const { log } = require('./log')
 const NoAuth = require('./no-auth')
