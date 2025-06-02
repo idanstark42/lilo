@@ -4,6 +4,7 @@ const cors = require('cors')
 const fileupload = require('express-fileupload')
 
 const { log } = require('./modules/log')
+const { router: authRouter } = require('./auth')
 const { router: dBRouter, connectDatabase } = require('./modules/database')
 const { router: cloudinaryRouter } = require('./modules/cloudinary')
 const { router: muxRouter } = require('./modules/mux')
@@ -20,9 +21,10 @@ app.use(cors({
 }))
 
 app.use(fileupload({ useTempFiles: true }))
-app.use('/database', express.json(), dBRouter())
-app.use('/image', express.json(), cloudinaryRouter())
+app.use('/database', dBRouter())
+app.use('/image', cloudinaryRouter())
 app.use('/video', muxRouter())
+app.use('/auth', authRouter())
 
 ;(async () => {
   await connectDatabase()

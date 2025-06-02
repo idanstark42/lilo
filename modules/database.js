@@ -10,6 +10,9 @@ exports.mongoClient = mongoClient
 
 exports.router = () => {
   const router = express.Router()
+
+  router.use(express.json())
+
   router.post('/', async (req, res) => {
     const { action, collection, data, filter, options } = req.body
     const authType = process.env[`${collection.toUpperCase()}_${action.toUpperCase()}_AUTH_TYPE`]

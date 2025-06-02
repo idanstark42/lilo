@@ -1,10 +1,13 @@
 const express = require('express')
 const { Client: StytchClient } = require('stytch')
+const express = require('express')
 
+const { log } = require('./log')
 const NoAuth = require('./no-auth')
 const PersonalAuth = require('./personal-auth')
 const PermissionsAuth = require('./permissions-auth')
 const AdminAuth = require('./admin-auth')
+const MultipleAuth = require('./multiple-auth')
 
 // Stytch client setup
 const stytch = new StytchClient({
@@ -27,3 +30,16 @@ function getAuth (authType) {
 }
 
 exports.getAuth = getAuth
+
+exports.router = () => {
+  const router = express.Router()
+  
+  router.use(express.json())
+
+  router.post('/update', async (req, res) => {
+    const auth = new MultipleAuth('or', [getAuth('personal'), getAuth('admin')])
+    await auth.authenticate(req.headers.authorization)
+  })
+
+  return router
+}

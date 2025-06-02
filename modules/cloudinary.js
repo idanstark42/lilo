@@ -5,6 +5,8 @@ const { getAuth } = require('./auth')
 
 exports.router = () => {
   const router = express.Router()
+  
+    router.use(express.json())
 
   router.post('/', async (req, res) => {
     const image = req.files?.image?.tempFilePath
@@ -24,7 +26,7 @@ exports.router = () => {
       log.error(err)
       res.status(err.status || 500).json({ success: false, error: err.message || 'Internal Server Error' })
     }
-})
+  })
 
   return router
 }
