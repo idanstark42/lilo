@@ -4,7 +4,7 @@ const cors = require('cors')
 const fileupload = require('express-fileupload')
 
 const { log } = require('./modules/log')
-const { router: authRouter } = require('./auth')
+const { router: authRouter } = require('./modules/auth')
 const { router: dBRouter, connectDatabase } = require('./modules/database')
 const { router: cloudinaryRouter } = require('./modules/cloudinary')
 const { router: muxRouter } = require('./modules/mux')
