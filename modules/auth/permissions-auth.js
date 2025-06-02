@@ -15,7 +15,7 @@ class PermissionsAuth extends HeaderAuth {
   }
 
   filter (filter, options) {
-    if (this.allowWithoutAuth(options)) {
+    if (this.allowWithoutAuth({ filter, options })) {
       return filter
     }
 
