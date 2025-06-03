@@ -36,7 +36,7 @@ exports.router = () => {
   router.use(express.json())
 
   router.post('/update', async (req, res) => {
-    const auth = new MultipleAuth('or', [getAuth('personal'), getAuth('admin')])
+    const auth = new MultipleAuth(stytch, 'or', [getAuth('personal'), getAuth('admin')])
     await auth.authenticate(req.headers.authorization)
     log.info(`Updating user ${JSON.stringify(req.body)}`)
     const response = await stytch.users.update(req.body)

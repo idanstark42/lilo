@@ -1,7 +1,8 @@
 const AuthType = require('./auth-type')
 
 class MultipleAuth extends AuthType {
-  constructor (type, subauths) {
+  constructor (stytch, type, subauths) {
+    super(stytch, [])
     this.type = type
     this.subauths = subauths
   }
