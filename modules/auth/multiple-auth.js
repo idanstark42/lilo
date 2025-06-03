@@ -8,7 +8,7 @@ class MultipleAuth extends AuthType {
   }
 
   async authenticate (...params) {
-    return await this[type](...params)
+    return await this[this.type](...params)
   }
 
   async or (...params) {
