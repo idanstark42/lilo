@@ -24,7 +24,7 @@ app.use(fileupload({ useTempFiles: true }))
 app.use('/database', dBRouter())
 app.use('/image', cloudinaryRouter())
 app.use('/video', muxRouter())
-app.use('/auth', authRouter())
+app.use('/user', authRouter())
 
 ;(async () => {
   await connectDatabase()
